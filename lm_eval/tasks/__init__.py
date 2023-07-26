@@ -64,6 +64,7 @@ from . import mgsm
 from . import scrolls
 from . import ceval
 from . import csatqa
+from . import ceval_test
 
 ########################################
 # Translation tasks
@@ -339,6 +340,7 @@ TASK_REGISTRY = {
     **mgsm.construct_tasks(),
     **scrolls.construct_tasks(),
     **ceval.create_all_tasks(),
+    **ceval_test.create_all_tasks(),
 }
 
 

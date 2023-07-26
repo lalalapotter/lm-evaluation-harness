@@ -22,17 +22,17 @@ class HFLM(BaseLM):
 
     def __init__(
         self,
-        device="cuda",
+        device="cpu",
         pretrained="gpt2",
         revision="main",
         low_cpu_mem_usage=None,
         subfolder=None,
         tokenizer=None,
-        batch_size=1,
+        batch_size=16,
         max_batch_size=512,
         max_length=None,
         load_in_8bit: Optional[bool] = False,
-        trust_remote_code: Optional[bool] = False,
+        trust_remote_code: Optional[bool] = True,
         dtype: Optional[Union[str, torch.dtype]]="auto",
     ):
         super().__init__()
@@ -87,7 +87,7 @@ class HFLM(BaseLM):
                     load_in_8bit=load_in_8bit,
                     low_cpu_mem_usage=low_cpu_mem_usage,
                     revision=revision,
-                    torch_dtype=_get_dtype(dtype),
+                    torch_dtype=torch.bfloat16,
                     trust_remote_code=trust_remote_code,
                     ).to(self.device)
             self.tokenizer = transformers.AutoTokenizer.from_pretrained(

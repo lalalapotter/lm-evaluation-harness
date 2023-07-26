@@ -324,7 +324,8 @@ def evaluate(
 
     vals = collections.defaultdict(list)
 
-    # unpack results and sort back in order and return control to Task
+    # unpack results and sort back in order and return control to 
+    submission = {}
     for (task_name, doc_id), requests in process_res_queue.items():
         requests.sort(key=lambda x: x[0])
         requests = [x[1] for x in requests]
@@ -333,6 +334,13 @@ def evaluate(
         doc = docs[(task_name, doc_id)]
 
         metrics = task.process_results(doc, requests)
+        if "Ceval-test" in task_name:
+            if task_name not in submission.keys():
+                submission[task_name] = {}
+            keys = ["A", "B", "C", "D"]
+            choice = keys[np.argmax(requests)]
+            submission[task_name][doc_id] = choice
+
         for metric, value in metrics.items():
             vals[(task_name, metric)].append(value)
 
@@ -343,7 +351,9 @@ def evaluate(
             if decontaminate and task_name in overlaps:
                 if doc_id not in overlaps[task_name]:
                     vals[(task_name, metric + decontaminate_suffix)].append(value)
-
+    if submission:
+        import json
+        json.dump(submission,open('submission.json','w'),ensure_ascii=False,indent=4)
     # aggregate results
     for (task_name, metric), items in vals.items():
         task = task_dict[task_name]
